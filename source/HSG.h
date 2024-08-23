@@ -355,10 +355,11 @@ namespace HSG
     uint64_t total_hit9(0);
     uint64_t total_time0(0); // 记录总时间
     uint64_t total_hit0(0);
+    uint64_t average_count(0);
 
     // 测试函数
     //  时间1
-    void prefetch_time(const Vector &neighbor_vector)
+    inline void prefetch_time(const Vector &neighbor_vector)
     {
         auto begin = std::chrono::high_resolution_clock::now();
         Prefetch(neighbor_vector.data);
@@ -368,7 +369,7 @@ namespace HSG
     }
 
     // 时间2
-    float distance_time(const Index &index, const float *const target_vector, const Vector &neighbor_vector,
+    inline float distance_time(const Index &index, const float *const target_vector, const Vector &neighbor_vector,
                         const uint64_t &dimension)
     {
         auto begin = std::chrono::high_resolution_clock::now();
@@ -380,7 +381,7 @@ namespace HSG
     }
 
     // 时间3
-    void waiting_vectors_pop_time(std::priority_queue<std::pair<float, Offset>, std::vector<std::pair<float, Offset>>,
+    inline void waiting_vectors_pop_time(std::priority_queue<std::pair<float, Offset>, std::vector<std::pair<float, Offset>>,
                                                       std::greater<>> &waiting_vectors)
     {
         auto begin = std::chrono::high_resolution_clock::now();
@@ -390,7 +391,7 @@ namespace HSG
         ++total_hit2;
     }
 
-    bool visited_time(const std::vector<char> &visited, const Offset &neighbor_offset)
+    inline bool visited_time(const std::vector<char> &visited, const Offset &neighbor_offset)
     {
         auto begin = std::chrono::high_resolution_clock::now();
         bool s = !visited[neighbor_offset];
@@ -401,7 +402,7 @@ namespace HSG
     }
 
     // 标记遍历过
-    void visited_bool_time(std::vector<char> &visited, const Offset &neighbor_offset)
+    inline void visited_bool_time(std::vector<char> &visited, const Offset &neighbor_offset)
     {
         auto begin = std::chrono::high_resolution_clock::now();
         visited[neighbor_offset] = true;
@@ -411,7 +412,7 @@ namespace HSG
     }
 
     // 加入计算队列
-    void pool_push_time(std::vector<Offset> &pool, const Offset &neighbor_offset)
+    inline void pool_push_time(std::vector<Offset> &pool, const Offset &neighbor_offset)
     {
         auto begin = std::chrono::high_resolution_clock::now();
         pool.push_back(neighbor_offset);
@@ -420,7 +421,7 @@ namespace HSG
         ++total_hit5;
     }
 
-    bool nearest_size_compare_time(std::priority_queue<std::pair<float, ID>> &nearest_neighbors,
+    inline bool nearest_size_compare_time(std::priority_queue<std::pair<float, ID>> &nearest_neighbors,
                                    const uint64_t capacity)
     {
         auto begin = std::chrono::high_resolution_clock::now();
@@ -431,7 +432,7 @@ namespace HSG
         return s;
     }
 
-    bool nearest_top_compare_time(const float &distance, std::priority_queue<std::pair<float, ID>> &nearest_neighbors)
+    inline bool nearest_top_compare_time(const float &distance, std::priority_queue<std::pair<float, ID>> &nearest_neighbors)
     {
         auto begin = std::chrono::high_resolution_clock::now();
         bool s = distance < nearest_neighbors.top().first;
@@ -441,7 +442,7 @@ namespace HSG
         return s;
     }
 
-    void nearest_push(std::priority_queue<std::pair<float, ID>> &nearest_neighbors, const float &distance,
+    inline void nearest_push(std::priority_queue<std::pair<float, ID>> &nearest_neighbors, const float &distance,
                       const ID &neighbor_id)
     {
         auto begin = std::chrono::high_resolution_clock::now();
@@ -451,7 +452,7 @@ namespace HSG
         ++total_hit8;
     }
 
-    void waiting_push(std::priority_queue<std::pair<float, Offset>, std::vector<std::pair<float, Offset>>,
+    inline void waiting_push(std::priority_queue<std::pair<float, Offset>, std::vector<std::pair<float, Offset>>,
                                           std::greater<>> &waiting_vectors,
                       const float &distance, const Offset &neighbor_offset)
     {
@@ -462,7 +463,7 @@ namespace HSG
         ++total_hit9;
     }
 
-    void nearest_pop(std::priority_queue<std::pair<float, ID>> &nearest_neighbors)
+    inline void nearest_pop(std::priority_queue<std::pair<float, ID>> &nearest_neighbors)
     {
         auto begin = std::chrono::high_resolution_clock::now();
         nearest_neighbors.pop();
@@ -532,6 +533,8 @@ namespace HSG
                 pool_push_time(pool, neighbor_offset);
             }
         }
+
+        average_count = (average_count == 0) ? pool.size() : (average_count + pool.size())/2;
     }
 
     inline void Similarity(const Index &index, const float *const target_vector, std::vector<Offset> &pool,
@@ -1320,8 +1323,6 @@ namespace HSG
 
         // 计算池子
         auto pool = std::vector<Offset>();
-        // pool.reserve(100);
-
         // 阶段二
         // 查找与目标向量相似度最高（距离最近）的top-k个向量
         while (!waiting_vectors.empty())
@@ -1346,6 +1347,7 @@ namespace HSG
 
         if ((i + 1) % 100 == 0)
         {
+            std::cout << "average pool: " << average_count << std::endl;
             std::cout << "prefetch costs: " << total_time << std::endl;
             std::cout << "distance costs: " << total_time1 << std::endl;
             std::cout << "waiting pop costs: " << total_time2 << std::endl;
