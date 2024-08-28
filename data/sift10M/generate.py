@@ -35,7 +35,7 @@ def bvecs(path, n=0):
     return a
 
 
-# train = bvecs("bigann_base.bvecs", 10000000)
+train = bvecs("bigann_base.bvecs", 10000000)
 neighbors = ivecs("gnd/idx_10M.ivecs")
 get_deleted_vector.get_irrelevant(neighbors, 10000000, 2500000)
 get_deleted_vector.get_relevant(neighbors, 10, 500)

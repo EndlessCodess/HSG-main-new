@@ -19,6 +19,7 @@ void base_test(uint64_t short_edge_lower_limit, uint64_t cover_range, uint64_t b
     HSG::Index index(Space::Metric::Euclidean2, train[0].size(), short_edge_lower_limit, cover_range,
                      build_magnification);
 
+    auto begin1 = std::chrono::high_resolution_clock::now();
     for (auto i = 0; i < train.size(); ++i)
     {
         auto begin = std::chrono::high_resolution_clock::now();
@@ -26,6 +27,9 @@ void base_test(uint64_t short_edge_lower_limit, uint64_t cover_range, uint64_t b
         auto end = std::chrono::high_resolution_clock::now();
         auto time = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
     }
+    auto end1 = std::chrono::high_resolution_clock::now();
+    std::cout << "build all time: " << std::chrono::duration_cast<std::chrono::microseconds>(end1 - begin1).count()
+              << std::endl;
 
     uint64_t total_hit = 0;
     uint64_t total_time = 0;
@@ -34,23 +38,18 @@ void base_test(uint64_t short_edge_lower_limit, uint64_t cover_range, uint64_t b
 
     std::cout << std::format("cover rate: {0:<6.4}", cover_rate) << std::endl;
 
-    auto begin1 = std::chrono::high_resolution_clock::now();
     for (auto i = 0; i < test.size(); ++i)
     {
         auto begin = std::chrono::high_resolution_clock::now();
         auto query_result = HSG::Search(index, test[i].data(), top_k, search_magnification, i);
         auto end = std::chrono::high_resolution_clock::now();
         auto time = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
-        std::cout << "one search costs:" << time << std::endl;
         total_time += time;
         auto hit = verify(train, test[i], reference_answer[i], query_result, top_k);
         total_hit += hit;
     }
-    auto end1 = std::chrono::high_resolution_clock::now();
-    std::cout << "query all time: " << std::chrono::duration_cast<std::chrono::microseconds>(end1 - begin1).count()
-              << std::endl;
 
-    std::cout << std::format("total hit: {0:<13} average time(us): {1:<13}", total_hit, total_time / test.size())
+    std::cout << std::format("total hit: {0:<13} average time(us): {1:<13}", total_hit, total_time)
               << std::endl;
 }
 

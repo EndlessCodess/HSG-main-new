@@ -1347,18 +1347,17 @@ namespace HSG
 
         if ((i + 1) % 100 == 0)
         {
-            std::cout << "average pool: " << average_count << std::endl;
-            std::cout << "prefetch costs: " << total_time << std::endl;
-            std::cout << "distance costs: " << total_time1 << std::endl;
-            std::cout << "waiting pop costs: " << total_time2 << std::endl;
-            std::cout << "visited costs: " << total_time3 << std::endl;      // 重点分析
-            std::cout << "visited bool costs: " << total_time4 << std::endl; // 重点分析
-            std::cout << "pool push costs: " << total_time5 << std::endl;    // 重点分析
-            std::cout << "size compare costs: " << total_time6 << std::endl;
-            std::cout << "top compare costs: " << total_time7 << std::endl;
-            std::cout << "nearest push costs: " << total_time8 << std::endl;
-            std::cout << "waiting push costs: " << total_time9 << std::endl;
-            std::cout << "nearest pop costs: " << total_time0 << std::endl;
+            std::cout << "prefetch costs: " << total_time << "hits:" << total_hit <<std::endl;
+            std::cout << "distance costs: " << total_time1 <<"hits:" << total_hit1 << std::endl;
+            std::cout << "waiting pop costs: " << total_time2 << "hits:" << total_hit2 <<std::endl;
+            std::cout << "visited costs: " << total_time3 << "hits:" << total_hit3 <<std::endl;      // 重点分析
+            std::cout << "visited bool costs: " << total_time4 << "hits:" << total_hit4 <<std::endl; // 重点分析
+            std::cout << "pool push costs: " << total_time5 << "hits:" << total_hit5 <<std::endl;    // 重点分析
+            std::cout << "size compare costs: " << total_time6 << "hits:" << total_hit6 <<std::endl;
+            std::cout << "top compare costs: " << total_time7 << "hits:" << total_hit7 <<std::endl;
+            std::cout << "nearest push costs: " << total_time8 << "hits:" << total_hit8 <<std::endl;
+            std::cout << "waiting push costs: " << total_time9 << "hits:" << total_hit9 <<std::endl;
+            std::cout << "nearest pop costs: " << total_time0 << "hits:" << total_hit0 <<std::endl;
         }
 
         return nearest_neighbors;
