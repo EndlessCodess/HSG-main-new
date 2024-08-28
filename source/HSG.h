@@ -333,28 +333,19 @@ namespace HSG
         }
     }
 
+    ////////////////////////////////////////////////////////////////
+
     uint64_t total_time(0); // 记录总时间
-    uint64_t total_hit(0);
     uint64_t total_time1(0); // 记录总时间
-    uint64_t total_hit1(0);
     uint64_t total_time2(0); // 记录总时间
-    uint64_t total_hit2(0);
     uint64_t total_time3(0); // 记录总时间
-    uint64_t total_hit3(0);
     uint64_t total_time4(0); // 记录总时间
-    uint64_t total_hit4(0);
     uint64_t total_time5(0); // 记录总时间
-    uint64_t total_hit5(0);
     uint64_t total_time6(0); // 记录总时间
-    uint64_t total_hit6(0);
     uint64_t total_time7(0); // 记录总时间
-    uint64_t total_hit7(0);
     uint64_t total_time8(0); // 记录总时间
-    uint64_t total_hit8(0);
     uint64_t total_time9(0); // 记录总时间
-    uint64_t total_hit9(0);
     uint64_t total_time0(0); // 记录总时间
-    uint64_t total_hit0(0);
     uint64_t average_count(0);
 
     // 测试函数
@@ -364,31 +355,29 @@ namespace HSG
         auto begin = std::chrono::high_resolution_clock::now();
         Prefetch(neighbor_vector.data);
         auto end = std::chrono::high_resolution_clock::now();
-        total_time += std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
-        ++total_hit;
+        total_time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
     }
 
     // 时间2
     inline float distance_time(const Index &index, const float *const target_vector, const Vector &neighbor_vector,
-                        const uint64_t &dimension)
+                               const uint64_t &dimension)
     {
         auto begin = std::chrono::high_resolution_clock::now();
         float s = index.similarity(target_vector, neighbor_vector.data, dimension);
         auto end = std::chrono::high_resolution_clock::now();
-        total_time1 += std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
-        ++total_hit1;
+        total_time1 += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
         return s;
     }
 
     // 时间3
-    inline void waiting_vectors_pop_time(std::priority_queue<std::pair<float, Offset>, std::vector<std::pair<float, Offset>>,
-                                                      std::greater<>> &waiting_vectors)
+    inline void waiting_vectors_pop_time(
+        std::priority_queue<std::pair<float, Offset>, std::vector<std::pair<float, Offset>>, std::greater<>>
+            &waiting_vectors)
     {
         auto begin = std::chrono::high_resolution_clock::now();
         waiting_vectors.pop();
         auto end = std::chrono::high_resolution_clock::now();
-        total_time2 += std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
-        ++total_hit2;
+        total_time2 += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
     }
 
     inline bool visited_time(const std::vector<char> &visited, const Offset &neighbor_offset)
@@ -396,8 +385,7 @@ namespace HSG
         auto begin = std::chrono::high_resolution_clock::now();
         bool s = !visited[neighbor_offset];
         auto end = std::chrono::high_resolution_clock::now();
-        total_time3 += std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
-        ++total_hit3;
+        total_time3 += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
         return s;
     }
 
@@ -407,8 +395,7 @@ namespace HSG
         auto begin = std::chrono::high_resolution_clock::now();
         visited[neighbor_offset] = true;
         auto end = std::chrono::high_resolution_clock::now();
-        total_time4 += std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
-        ++total_hit4;
+        total_time4 += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
     }
 
     // 加入计算队列
@@ -417,50 +404,46 @@ namespace HSG
         auto begin = std::chrono::high_resolution_clock::now();
         pool.push_back(neighbor_offset);
         auto end = std::chrono::high_resolution_clock::now();
-        total_time5 += std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
-        ++total_hit5;
+        total_time5 += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
     }
 
     inline bool nearest_size_compare_time(std::priority_queue<std::pair<float, ID>> &nearest_neighbors,
-                                   const uint64_t capacity)
+                                          const uint64_t capacity)
     {
         auto begin = std::chrono::high_resolution_clock::now();
         bool s = nearest_neighbors.size() < capacity;
         auto end = std::chrono::high_resolution_clock::now();
-        total_time6 += std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
-        ++total_hit6;
+        total_time6 += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
         return s;
     }
 
-    inline bool nearest_top_compare_time(const float &distance, std::priority_queue<std::pair<float, ID>> &nearest_neighbors)
+    inline bool nearest_top_compare_time(const float &distance,
+                                         std::priority_queue<std::pair<float, ID>> &nearest_neighbors)
     {
         auto begin = std::chrono::high_resolution_clock::now();
         bool s = distance < nearest_neighbors.top().first;
         auto end = std::chrono::high_resolution_clock::now();
-        total_time7 += std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
-        ++total_hit7;
+        total_time7 += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
         return s;
     }
 
     inline void nearest_push(std::priority_queue<std::pair<float, ID>> &nearest_neighbors, const float &distance,
-                      const ID &neighbor_id)
+                             const ID &neighbor_id)
     {
         auto begin = std::chrono::high_resolution_clock::now();
         nearest_neighbors.push({distance, neighbor_id});
         auto end = std::chrono::high_resolution_clock::now();
-        total_time8 += std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
-        ++total_hit8;
+        total_time8 += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
     }
 
     inline void waiting_push(std::priority_queue<std::pair<float, Offset>, std::vector<std::pair<float, Offset>>,
-                                          std::greater<>> &waiting_vectors,
-                      const float &distance, const Offset &neighbor_offset)
+                                                 std::greater<>> &waiting_vectors,
+                             const float &distance, const Offset &neighbor_offset)
     {
         auto begin = std::chrono::high_resolution_clock::now();
         waiting_vectors.push({distance, neighbor_offset});
         auto end = std::chrono::high_resolution_clock::now();
-        total_time9 += std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
-        ++total_hit9;
+        total_time9 += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
     }
 
     inline void nearest_pop(std::priority_queue<std::pair<float, ID>> &nearest_neighbors)
@@ -468,9 +451,10 @@ namespace HSG
         auto begin = std::chrono::high_resolution_clock::now();
         nearest_neighbors.pop();
         auto end = std::chrono::high_resolution_clock::now();
-        total_time0 += std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
-        ++total_hit0;
+        total_time0 += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
     }
+
+    ///////////////////////////////////
 
     inline void Get_Pool_From_SE(const Index &index, const Offset processing_offset, std::vector<char> &visited,
                                  std::vector<Offset> &pool)
@@ -534,7 +518,7 @@ namespace HSG
             }
         }
 
-        average_count = (average_count == 0) ? pool.size() : (average_count + pool.size())/2;
+        average_count = (average_count == 0) ? pool.size() : (average_count + pool.size()) / 2;
     }
 
     inline void Similarity(const Index &index, const float *const target_vector, std::vector<Offset> &pool,
@@ -1273,6 +1257,21 @@ namespace HSG
         Offset next_offset = 0;
         float minimum_distance = F32MAX;
 
+        if (i == 0)
+        {
+            total_time0 = 0;
+            total_time1 = 0;
+            total_time2 = 0;
+            total_time3 = 0;
+            total_time4 = 0;
+            total_time5 = 0;
+            total_time6 = 0;
+            total_time7 = 0;
+            total_time8 = 0;
+            total_time9 = 0;
+            total_time = 0;
+        }
+
         while (last_offset != next_offset)
         {
             last_offset = next_offset;
@@ -1347,17 +1346,17 @@ namespace HSG
 
         if ((i + 1) % 100 == 0)
         {
-            std::cout << "prefetch costs: " << total_time << "hits:" << total_hit <<std::endl;
-            std::cout << "distance costs: " << total_time1 <<"hits:" << total_hit1 << std::endl;
-            std::cout << "waiting pop costs: " << total_time2 << "hits:" << total_hit2 <<std::endl;
-            std::cout << "visited costs: " << total_time3 << "hits:" << total_hit3 <<std::endl;      // 重点分析
-            std::cout << "visited bool costs: " << total_time4 << "hits:" << total_hit4 <<std::endl; // 重点分析
-            std::cout << "pool push costs: " << total_time5 << "hits:" << total_hit5 <<std::endl;    // 重点分析
-            std::cout << "size compare costs: " << total_time6 << "hits:" << total_hit6 <<std::endl;
-            std::cout << "top compare costs: " << total_time7 << "hits:" << total_hit7 <<std::endl;
-            std::cout << "nearest push costs: " << total_time8 << "hits:" << total_hit8 <<std::endl;
-            std::cout << "waiting push costs: " << total_time9 << "hits:" << total_hit9 <<std::endl;
-            std::cout << "nearest pop costs: " << total_time0 << "hits:" << total_hit0 <<std::endl;
+            std::cout << "prefetch costs: " << total_time << std::endl;
+            std::cout << "distance costs: " << total_time1 << std::endl;
+            std::cout << "waiting pop costs: " << total_time2 << std::endl;
+            std::cout << "visited costs: " << total_time3 << std::endl;      // 重点分析
+            std::cout << "visited bool costs: " << total_time4 << std::endl; // 重点分析
+            std::cout << "pool push costs: " << total_time5 << std::endl;    // 重点分析
+            std::cout << "size compare costs: " << total_time6<< std::endl;
+            std::cout << "top compare costs: " << total_time7 << std::endl;
+            std::cout << "nearest push costs: " << total_time8 << std::endl;
+            std::cout << "waiting push costs: " << total_time9<< std::endl;
+            std::cout << "nearest pop costs: " << total_time0 << std::endl;
         }
 
         return nearest_neighbors;
